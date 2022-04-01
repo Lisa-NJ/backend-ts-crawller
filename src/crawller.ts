@@ -9,7 +9,7 @@ export interface Analyzer {
     analyze: (html: string, filePath: string) => string
 }
 
-class Crowller {
+class Crawller {
     private filePath = path.resolve(__dirname, '../data/course.json')
 
     private async getRawHtml() {
@@ -36,4 +36,4 @@ const secret = 'secretKey'
 const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
 
 const analyzer = DellAnalyzer.getInstance()
-new Crowller(url, analyzer)
+new Crawller(url, analyzer)
