@@ -15,6 +15,15 @@ interface Content {
 }
 
 export default class DellAnalyzer implements Analyzer {
+    private static instance: DellAnalyzer;
+
+    static getInstance() {
+        if (!DellAnalyzer.instance) {
+            DellAnalyzer.instance = new DellAnalyzer()
+        }
+        return DellAnalyzer.instance
+    }
+
     public analyze(html: string, filePath: string) {
         const courseInfo = this.getCouseInfo(html)
         return this.generateJsonContent(courseInfo, filePath)
@@ -49,4 +58,6 @@ export default class DellAnalyzer implements Analyzer {
 
         return JSON.stringify(fileContent)
     }
+
+    private constructor() { }
 }
