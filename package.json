@@ -18,11 +18,13 @@
   "license": "ISC",
   "devDependencies": {
     "@types/cheerio": "^0.22.31",
+    "@types/cookie-session": "^2.0.44",
     "@types/express": "^4.17.13",
     "@types/superagent": "^4.1.15",
     "body-parser": "^1.19.2",
     "cheerio": "^1.0.0-rc.10",
     "concurrently": "^7.0.0",
+    "cookie-session": "^2.0.0",
     "express": "^4.17.3",
     "nodemon": "^2.0.15",
     "superagent": "^7.1.2",
