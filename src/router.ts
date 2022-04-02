@@ -2,6 +2,12 @@ import { Router, Request, Response } from 'express'
 import DellAnalyzer from './dellAnalyzer'
 import Crawller from './crawller'
 
+interface RequestWithBody extends Request {
+    body: {
+        [key: string]: string | undefined
+    }
+}
+
 const router = Router()
 
 router.get('/', (req: Request, res: Response) => {
@@ -16,7 +22,7 @@ router.get('/', (req: Request, res: Response) => {
     `)
 })
 
-router.post('/getData', (req: Request, res: Response) => {
+router.post('/getData', (req: RequestWithBody, res: Response) => {
     const { password } = req.body
     if (password === '123') {
         const secret = 'secretKey'
@@ -27,7 +33,7 @@ router.post('/getData', (req: Request, res: Response) => {
 
         res.send('getDate success!')
     } else {
-        res.send('password Error!')
+        res.send(`${req.teacherName} password Error!`)
     }
 })
 
