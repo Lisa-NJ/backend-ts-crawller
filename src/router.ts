@@ -1,8 +1,10 @@
+import fs from 'fs'
+import path from 'path'
 import { Router, Request, Response, NextFunction } from 'express'
 import DellAnalyzer from './Utils/analyzer'
 import Crawller from './Utils/crawller'
-import fs from 'fs'
-import path from 'path'
+
+import { getResponseData } from './Utils/util'
 
 interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
@@ -13,7 +15,7 @@ const checkLogin = (req: BodyRequest, res: Response, next: NextFunction) => {
     if (isLogin) {
         next()
     } else {
-        res.send('please login in first!')
+        res.json(getResponseData(null, 'please login in first!'))
     }
 }
 
@@ -51,19 +53,19 @@ router.get('/logout', (req: BodyRequest, res: Response) => {
     if (req.session) {
         req.session.login = undefined
     }
-    res.redirect('/')
+    res.json(getResponseData(true))
 })
 
 router.post('/login', (req: BodyRequest, res: Response) => {
     const { password } = req.body
     const isLogin = req.session ? req.session.login : undefined
     if (isLogin) {
-        res.send('already logined in')
+        res.json(getResponseData(false, '已经登陆过'))
     } else if (password === '123' && req.session) {
         req.session.login = true
-        res.send('login success!')
+        res.json(getResponseData(true))
     } else {
-        res.send('login fail!')
+        res.json(getResponseData(false, 'login fail'))
     }
 })
 
@@ -74,8 +76,7 @@ router.get('/getData', checkLogin, (req: Request, res: Response) => {
     const analyzer = DellAnalyzer.getInstance()
     new Crawller(url, analyzer)
 
-    res.send('getDate success!')
-
+    res.json(getResponseData(true))
 })
 
 router.get('/showData', checkLogin, (req: BodyRequest, res: Response) => {
@@ -83,9 +84,9 @@ router.get('/showData', checkLogin, (req: BodyRequest, res: Response) => {
         const position = path.resolve(__dirname, '../data/course.json')
         const result = fs.readFileSync(position, 'utf-8')
         //res.json(JSON.parse(result)) //\n shown on the page 
-        res.json(JSON.parse(result))
+        res.json(getResponseData(JSON.parse(result)))
     } catch (e) {
-        res.send("no content yet")
+        res.json(getResponseData(null, 'content fail'))
     }
 })
 
