@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express'
 import DellAnalyzer from './dellAnalyzer'
 import Crawller from './crawller'
+import fs from 'fs'
+import path from 'path'
 
 interface RequestWithBody extends Request {
     body: {
@@ -17,7 +19,9 @@ router.get('/', (req: Request, res: Response) => {
         res.send(`
         <html>
             <body>
-               <a href='/logout'>Logout</a>
+                <a href='/getData'>Get Data</a>
+                <a href='/showData'>Show Data</a>
+                <a href='/logout'>Logout</a>
             </body>
         </html>
       `)
@@ -48,20 +52,17 @@ router.post('/login', (req: RequestWithBody, res: Response) => {
     const isLogin = req.session ? req.session.login : undefined
     if (isLogin) {
         res.send('already logined in')
+    } else if (password === '123' && req.session) {
+        req.session.login = true
+        res.send('login success!')
     } else {
-        if (password === '123' && req.session) {
-            req.session.login = true
-            res.send('login success!')
-        } else {
-            res.send('login fail!')
-        }
+        res.send('login fail!')
     }
-
 })
 
-router.post('/getData', (req: RequestWithBody, res: Response) => {
-    const { password } = req.body
-    if (password === '123') {
+router.get('/getData', (req: RequestWithBody, res: Response) => {
+    const isLogin = req.session ? req.session.login : undefined
+    if (isLogin) {
         const secret = 'secretKey'
         const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
 
@@ -70,7 +71,23 @@ router.post('/getData', (req: RequestWithBody, res: Response) => {
 
         res.send('getDate success!')
     } else {
-        res.send('password Error!')
+        res.send('Please log in first!')
+    }
+})
+
+router.get('/showData', (req: RequestWithBody, res: Response) => {
+    const isLogin = req.session ? req.session.login : undefined
+    if (isLogin) {
+        try {
+            const position = path.resolve(__dirname, '../data/course.json')
+            const result = fs.readFileSync(position, 'utf-8')
+            //res.json(JSON.parse(result)) //\n shown on the page 
+            res.json(JSON.parse(result))
+        } catch (e) {
+            res.send("no content yet")
+        }
+    } else {
+        res.send('please login in first!')
     }
 })
 
