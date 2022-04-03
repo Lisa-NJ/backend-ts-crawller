@@ -1,18 +1,25 @@
-import { Router, Request, Response } from 'express'
-import DellAnalyzer from './dellAnalyzer'
-import Crawller from './crawller'
+import { Router, Request, Response, NextFunction } from 'express'
+import DellAnalyzer from './Utils/analyzer'
+import Crawller from './Utils/crawller'
 import fs from 'fs'
 import path from 'path'
 
-interface RequestWithBody extends Request {
-    body: {
-        [key: string]: string | undefined
+interface BodyRequest extends Request {
+    body: { [key: string]: string | undefined }
+}
+
+const checkLogin = (req: BodyRequest, res: Response, next: NextFunction) => {
+    const isLogin = req.session ? req.session.login : undefined
+    if (isLogin) {
+        next()
+    } else {
+        res.send('please login in first!')
     }
 }
 
 const router = Router()
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', (req: BodyRequest, res: Response) => {
     const isLogin = req.session ? req.session.login : undefined
 
     if (isLogin) {
@@ -38,7 +45,7 @@ router.get('/', (req: Request, res: Response) => {
     }
 })
 
-router.get('/logout', (req: Request, res: Response) => {
+router.get('/logout', (req: BodyRequest, res: Response) => {
     console.log('router--logout')
 
     if (req.session) {
@@ -47,7 +54,7 @@ router.get('/logout', (req: Request, res: Response) => {
     res.redirect('/')
 })
 
-router.post('/login', (req: RequestWithBody, res: Response) => {
+router.post('/login', (req: BodyRequest, res: Response) => {
     const { password } = req.body
     const isLogin = req.session ? req.session.login : undefined
     if (isLogin) {
@@ -60,34 +67,25 @@ router.post('/login', (req: RequestWithBody, res: Response) => {
     }
 })
 
-router.get('/getData', (req: RequestWithBody, res: Response) => {
-    const isLogin = req.session ? req.session.login : undefined
-    if (isLogin) {
-        const secret = 'secretKey'
-        const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
+router.get('/getData', checkLogin, (req: Request, res: Response) => {
+    const secret = 'secretKey'
+    const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
 
-        const analyzer = DellAnalyzer.getInstance()
-        new Crawller(url, analyzer)
+    const analyzer = DellAnalyzer.getInstance()
+    new Crawller(url, analyzer)
 
-        res.send('getDate success!')
-    } else {
-        res.send('Please log in first!')
-    }
+    res.send('getDate success!')
+
 })
 
-router.get('/showData', (req: RequestWithBody, res: Response) => {
-    const isLogin = req.session ? req.session.login : undefined
-    if (isLogin) {
-        try {
-            const position = path.resolve(__dirname, '../data/course.json')
-            const result = fs.readFileSync(position, 'utf-8')
-            //res.json(JSON.parse(result)) //\n shown on the page 
-            res.json(JSON.parse(result))
-        } catch (e) {
-            res.send("no content yet")
-        }
-    } else {
-        res.send('please login in first!')
+router.get('/showData', checkLogin, (req: BodyRequest, res: Response) => {
+    try {
+        const position = path.resolve(__dirname, '../data/course.json')
+        const result = fs.readFileSync(position, 'utf-8')
+        //res.json(JSON.parse(result)) //\n shown on the page 
+        res.json(JSON.parse(result))
+    } catch (e) {
+        res.send("no content yet")
     }
 })
 

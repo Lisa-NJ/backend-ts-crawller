@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 // var bodyParser = require('body-parser') // commonJS 语法
 import bodyParser from 'body-parser' // ts 支持的 import
 import cookieSession from 'cookie-session'
