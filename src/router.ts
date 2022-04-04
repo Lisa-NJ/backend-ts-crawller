@@ -21,31 +21,7 @@ const checkLogin = (req: BodyRequest, res: Response, next: NextFunction) => {
 
 const router = Router()
 
-router.get('/', (req: BodyRequest, res: Response) => {
-    const isLogin = req.session ? req.session.login : undefined
-
-    if (isLogin) {
-        res.send(`
-        <html>
-            <body>
-                <a href='/getData'>Get Data</a>
-                <a href='/showData'>Show Data</a>
-                <a href='/logout'>Logout</a>
-            </body>
-        </html>
-      `)
-    } else {
-        res.send(`
-            <html>
-                <body>
-                    <form method='post' action='/login'>
-                    <input type='password' name='password'>
-                    <button>Login</button>
-                </body>
-            </html>
-          `)
-    }
-})
+router.get('/', () => { })
 
 router.get('/logout', (req: BodyRequest, res: Response) => {
     console.log('router--logout')
