@@ -1,18 +1,18 @@
-import { Request, Response, NextFunction } from 'express'
-import 'reflect-metadata'
 import fs from 'fs'
 import path from 'path'
-import { controller, get, use } from './decorator'
+import 'reflect-metadata'
+import { Request, Response, NextFunction } from 'express'
+import { get, use, controller } from '../decorator'
 import { getResponseData } from '../Utils/util'
-import DellAnalyzer from '../Utils/analyzer'
+import Analyzer from '../Utils/analyzer'
 import Crawller from '../Utils/crawller'
 
 interface BodyRequest extends Request {
   body: { [key: string]: string | undefined }
 }
 
-const checkLogin = (req: BodyRequest, res: Response, next: NextFunction) => {
-  const isLogin = req.session ? req.session.login : undefined
+const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void => {
+  const isLogin = !!(req.session ? req.session.login : undefined)
   if (isLogin) {
     next()
   } else {
@@ -20,15 +20,15 @@ const checkLogin = (req: BodyRequest, res: Response, next: NextFunction) => {
   }
 }
 
-@controller
-class CrawllerController {
+@controller('/')
+export class CrawllerController {
   @get("/getData")
   @use(checkLogin)
-  getData(req: BodyRequest, res: Response) {
+  getData(req: BodyRequest, res: Response): void {
     const secret = "secretKey"
     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
 
-    const analyzer = DellAnalyzer.getInstance()
+    const analyzer = Analyzer.getInstance()
     new Crawller(url, analyzer)
 
     res.json(getResponseData(true))
@@ -36,7 +36,7 @@ class CrawllerController {
 
   @get("/showData")
   @use(checkLogin)
-  showData(req: BodyRequest, res: Response) {
+  showData(req: BodyRequest, res: Response): void {
     try {
       const position = path.resolve(__dirname, '../../data/course.json')
       const result = fs.readFileSync(position, 'utf-8')

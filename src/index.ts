@@ -3,7 +3,7 @@ import express from 'express'
 import bodyParser from 'body-parser' // ts 支持的 import
 import cookieSession from 'cookie-session'
 import './controller/LoginController'
-import { router } from './controller/decorator'
+import { router } from './router'
 import './controller/CrawllerController'
 
 const app = express()
@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieSession({
     name: 'session',
     keys: ['teacher dell'],
-
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))

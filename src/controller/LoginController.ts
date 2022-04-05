@@ -1,19 +1,46 @@
-import { NextFunction, Request, Response, Router } from 'express'
+import { Request, Response } from 'express'
 import 'reflect-metadata'
-import { controller, get, post } from './decorator'
+import { controller, get, post } from '../decorator'
 import { getResponseData } from '../Utils/util'
 
 interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
 }
 
-@controller
-class LoginController {
-    @get("/")
-    home(req: BodyRequest, res: Response) {
-        console.log('get - /');
+@controller('/')
+export class LoginController {
+    @post('/login')
+    login(req: BodyRequest, res: Response): void {
+        console.log('--- go to /login ---');
 
-        const isLogin = req.session ? req.session.login : undefined
+        const { password } = req.body
+        const isLogin = !!(req.session ? req.session.login : false)
+        if (isLogin) {
+            res.json(getResponseData(false, "already logged in"))
+        } else {
+            if (password === '123' && req.session) {
+                req.session.login = true
+                res.json(getResponseData(true))
+            } else {
+                res.json(getResponseData(false, "fail to login"))
+            }
+        }
+    }
+
+    @get('/logout')
+    logout(req: BodyRequest, res: Response): void {
+        if (req.session) {
+            req.session.login = undefined
+        }
+        res.json(getResponseData(true))
+
+    }
+
+    @get('/')
+    home(req: BodyRequest, res: Response): void {
+        console.log('congratulations! you are here get - /');
+
+        const isLogin = !!(req.session ? req.session.login : undefined)
 
         if (isLogin) {
             res.send(`
@@ -36,19 +63,5 @@ class LoginController {
                 </html>
               `)
         }
-    }
-
-    @post('/login')
-    login(req: BodyRequest, res: Response) {
-        res.send('login is running')
-    }
-
-    @get('/logout')
-    logout(req: BodyRequest, res: Response) {
-        if (req.session) {
-            req.session.login = undefined
-        }
-        res.json(getResponseData(true))
-
     }
 }
