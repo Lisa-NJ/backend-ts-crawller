@@ -2,7 +2,9 @@ import express from 'express'
 // var bodyParser = require('body-parser') // commonJS 语法
 import bodyParser from 'body-parser' // ts 支持的 import
 import cookieSession from 'cookie-session'
-import router from './router'
+import './controller/LoginController'
+import { router } from './controller/decorator'
+import './controller/CrawllerController'
 
 const app = express()
 

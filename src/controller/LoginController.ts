@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import 'reflect-metadata'
-import { controller, get } from './decorator'
+import { controller, get, post } from './decorator'
+import { getResponseData } from '../Utils/util'
 
 interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
@@ -8,11 +9,10 @@ interface BodyRequest extends Request {
 
 @controller
 class LoginController {
-    @get('/login')
-    login() { }
-
-    @get('/')
+    @get("/")
     home(req: BodyRequest, res: Response) {
+        console.log('get - /');
+
         const isLogin = req.session ? req.session.login : undefined
 
         if (isLogin) {
@@ -36,5 +36,19 @@ class LoginController {
                 </html>
               `)
         }
+    }
+
+    @post('/login')
+    login(req: BodyRequest, res: Response) {
+        res.send('login is running')
+    }
+
+    @get('/logout')
+    logout(req: BodyRequest, res: Response) {
+        if (req.session) {
+            req.session.login = undefined
+        }
+        res.json(getResponseData(true))
+
     }
 }
