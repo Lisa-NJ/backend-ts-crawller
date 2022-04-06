@@ -13,17 +13,23 @@ interface BodyRequest extends Request {
 
 const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void => {
   const isLogin = !!(req.session ? req.session.login : undefined)
+  console.log('checkLogin middleware isLogin=', isLogin);
   if (isLogin) {
     next()
   } else {
     res.json(getResponseData(null, 'please login in first!'))
   }
-}
 
+}
+const test = (req: BodyRequest, res: Response, next: NextFunction): void => {
+  console.log('test middleware');
+
+}
 @controller('/')
 export class CrawllerController {
   @get("/getData")
   @use(checkLogin)
+  @use(test)
   getData(req: BodyRequest, res: Response): void {
     const secret = "secretKey"
     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`

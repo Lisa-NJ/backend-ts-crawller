@@ -11,7 +11,10 @@ export function getRequestDecorator(method: Methods) {
       console.log(`----${method} decorator`);
 
       Reflect.defineMetadata('path', path, target, key)
+      console.log('\tpath', target, key);
+
       Reflect.defineMetadata('method', method, target, key)
+      console.log('\tmethod', target, key);
     }
   }
 }

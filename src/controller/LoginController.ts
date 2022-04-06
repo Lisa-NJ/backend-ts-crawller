@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import 'reflect-metadata'
+import "reflect-metadata"
 import { controller, get, post } from '../decorator'
 import { getResponseData } from '../Utils/util'
 
@@ -9,12 +9,16 @@ interface BodyRequest extends Request {
 
 @controller('/')
 export class LoginController {
+    static isLogin(req: BodyRequest): boolean {
+        return !!(req.session ? req.session.login : false)
+    }
+
     @post('/login')
     login(req: BodyRequest, res: Response): void {
         console.log('--- go to /login ---');
 
         const { password } = req.body
-        const isLogin = !!(req.session ? req.session.login : false)
+        const isLogin = LoginController.isLogin(req)
         if (isLogin) {
             res.json(getResponseData(false, "already logged in"))
         } else {
@@ -40,8 +44,7 @@ export class LoginController {
     home(req: BodyRequest, res: Response): void {
         console.log('congratulations! you are here get - /');
 
-        const isLogin = !!(req.session ? req.session.login : undefined)
-
+        const isLogin = LoginController.isLogin(req)
         if (isLogin) {
             res.send(`
             <html>
