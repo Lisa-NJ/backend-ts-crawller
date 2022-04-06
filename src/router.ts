@@ -1,7 +1,11 @@
+import fs from 'fs'
+import path from 'path'
 import { Router, Request, Response } from 'express'
 import { LoginController } from './controller'
 import { getResponseData } from './Utils/util'
 import { BodyRequest } from './controller'
+import Analyzer from './Utils/analyzer'
+import Crawller from './Utils/crawller'
 
 export const router = Router()
 
@@ -21,6 +25,30 @@ router.get('/api/logout', (req: BodyRequest, res: Response) => {
     req.session.login = undefined
   }
   res.json(getResponseData(true))
+
+})
+router.get('/api/getData', (req: BodyRequest, res: Response) => {
+  console.log('router-get-/api/getData');
+  const secret = "secretKey"
+  const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
+
+  const analyzer = Analyzer.getInstance()
+  new Crawller(url, analyzer)
+
+  res.json(getResponseData(true))
+
+})
+
+router.get('/api/showData', (req: BodyRequest, res: Response) => {
+  console.log('router-get-/api/showData');
+
+  try {
+    const position = path.resolve(__dirname, '../data/course.json')
+    const result = fs.readFileSync(position, 'utf-8')
+    res.json(getResponseData(JSON.parse(result)))
+  } catch (e) {
+    res.json(getResponseData(null, 'content fail'))
+  }
 
 })
 
