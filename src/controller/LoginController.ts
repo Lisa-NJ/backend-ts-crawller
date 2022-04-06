@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import "reflect-metadata"
 import { controller, get, post } from '../decorator'
-import { getResponseData } from '../Utils/util'
+import { Result, getResponseData } from '../Utils/util'
+
 
 export interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
@@ -16,7 +17,8 @@ export class LoginController {
     @get('/isLogin')
     isLogin(req: BodyRequest, res: Response): void {
         const isLogin = LoginController.isLogin(req)
-        res.json(getResponseData(isLogin))
+        const result: Result<boolean> = getResponseData(isLogin)
+        res.json(result)
     }
 
     @post('/login')
@@ -26,13 +28,16 @@ export class LoginController {
         const { password } = req.body
         const isLogin = LoginController.isLogin(req)
         if (isLogin) {
-            res.json(getResponseData(false, "already logged in"))
+            const result: Result<boolean> = getResponseData(false, "already logged in")
+            res.json(result)
         } else {
             if (password === '123' && req.session) {
                 req.session.login = true
-                res.json(getResponseData(true))
+                const result: Result<boolean> = getResponseData(true)
+                res.json(result)
             } else {
-                res.json(getResponseData(false, "fail to login"))
+                const result: Result<boolean> = getResponseData(false, "fail to login")
+                res.json(result)
             }
         }
     }
@@ -42,7 +47,8 @@ export class LoginController {
         if (req.session) {
             req.session.login = undefined
         }
-        res.json(getResponseData(true))
+        const result: Result<boolean> = getResponseData(true)
+        res.json(result)
 
     }
 
