@@ -3,14 +3,20 @@ import "reflect-metadata"
 import { controller, get, post } from '../decorator'
 import { getResponseData } from '../Utils/util'
 
-interface BodyRequest extends Request {
+export interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
 }
 
-@controller('/')
+@controller('/api')
 export class LoginController {
     static isLogin(req: BodyRequest): boolean {
         return !!(req.session ? req.session.login : false)
+    }
+
+    @get('/isLogin')
+    isLogin(req: BodyRequest, res: Response): void {
+        const isLogin = LoginController.isLogin(req)
+        res.json(getResponseData(isLogin))
     }
 
     @post('/login')
@@ -30,9 +36,9 @@ export class LoginController {
             }
         }
     }
-
     @get('/logout')
-    logout(req: BodyRequest, res: Response): void {
+    logout1(req: BodyRequest, res: Response): void {
+        console.log('router-get-/api/logout');
         if (req.session) {
             req.session.login = undefined
         }
@@ -40,31 +46,4 @@ export class LoginController {
 
     }
 
-    @get('/')
-    home(req: BodyRequest, res: Response): void {
-        console.log('congratulations! you are here get - /');
-
-        const isLogin = LoginController.isLogin(req)
-        if (isLogin) {
-            res.send(`
-            <html>
-                <body>
-                    <a href='/getData'>Get Data</a>
-                    <a href='/showData'>Show Data</a>
-                    <a href='/logout'>Logout</a>
-                </body>
-            </html>
-          `)
-        } else {
-            res.send(`
-                <html>
-                    <body>
-                        <form method='post' action='/login'>
-                        <input type='password' name='password'>
-                        <button>Login</button>
-                    </body>
-                </html>
-              `)
-        }
-    }
 }

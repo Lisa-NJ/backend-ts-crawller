@@ -23,8 +23,8 @@ const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void =
 }
 const test = (req: BodyRequest, res: Response, next: NextFunction): void => {
   console.log('test middleware');
-
 }
+
 @controller('/')
 export class CrawllerController {
   @get("/getData")
