@@ -3,7 +3,6 @@ import "reflect-metadata"
 import { controller, get, post } from '../decorator'
 import { Result, getResponseData } from '../Utils/util'
 
-
 export interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
 }
@@ -16,6 +15,8 @@ export class LoginController {
 
     @get('/isLogin')
     isLogin(req: BodyRequest, res: Response): void {
+        console.log('deal wtih isLogin');
+
         const isLogin = LoginController.isLogin(req)
         const result: Result<responseResult.isLogin> = getResponseData<responseResult.isLogin>(isLogin)
         res.json(result)
@@ -23,7 +24,7 @@ export class LoginController {
 
     @post('/login')
     login(req: BodyRequest, res: Response): void {
-        console.log('--- go to /login ---');
+        console.log('deal wtih login');
 
         const { password } = req.body
         const isLogin = LoginController.isLogin(req)
@@ -43,7 +44,7 @@ export class LoginController {
     }
     @get('/logout')
     logout1(req: BodyRequest, res: Response): void {
-        console.log('router-get-/api/logout');
+        console.log('deal wtih logout');
         if (req.session) {
             req.session.login = undefined
         }

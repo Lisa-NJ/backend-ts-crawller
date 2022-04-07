@@ -9,7 +9,6 @@ export function use(middleware: RequestHandler) {
     const originMiddlewares = Reflect.getMetadata('middlewares', target, key) || []
     originMiddlewares.push(middleware)
     Reflect.defineMetadata('middlewares', originMiddlewares, target, key)
-    console.log('...use factory ...', originMiddlewares, target, key);
   }
 }
 

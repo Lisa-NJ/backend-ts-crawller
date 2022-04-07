@@ -8,13 +8,8 @@ export enum Methods {
 export function getRequestDecorator(method: Methods) {
   return function (path: string) {
     return function (target: CrawllerController | LoginController, key: string) {
-      console.log(`----${method} decorator`);
-
       Reflect.defineMetadata('path', path, target, key)
-      console.log('\tpath', target, key);
-
       Reflect.defineMetadata('method', method, target, key)
-      console.log('\tmethod', target, key);
     }
   }
 }

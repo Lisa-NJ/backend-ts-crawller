@@ -21,21 +21,18 @@ const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void =
   }
 
 }
-const test = (req: BodyRequest, res: Response, next: NextFunction): void => {
-  console.log('test middleware');
-}
 
-@controller('/')
+@controller('/api')
 export class CrawllerController {
   @get("/getData")
   @use(checkLogin)
-  @use(test)
   getData(req: BodyRequest, res: Response): void {
     const secret = "secretKey"
     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
 
     const analyzer = Analyzer.getInstance()
     new Crawller(url, analyzer)
+    console.log('deal wtih getData');
 
     res.json(getResponseData<responseResult.getData>(true))
   }
@@ -43,6 +40,7 @@ export class CrawllerController {
   @get("/showData")
   @use(checkLogin)
   showData(req: BodyRequest, res: Response): void {
+    console.log('deal wtih showData');
     try {
       const position = path.resolve(__dirname, '../../data/course.json')
       const result = fs.readFileSync(position, 'utf-8')

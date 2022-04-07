@@ -7,14 +7,9 @@ export function controller(root: string) {
     console.log('controller~~~~', target.prototype);
 
     for (let key in target.prototype) {
-      console.log('\tsuccessfully fixed...');
-
       const path: string = Reflect.getMetadata('path', target.prototype, key)
       const method: Methods = Reflect.getMetadata('method', target.prototype, key)
       const middlewares: RequestHandler[] = Reflect.getMetadata('middlewares', target, key)
-      console.log('\tpath --', path)
-      console.log('\tmethod --', method)
-      console.log('\tmiddileware --', middlewares);
 
       const handler: any = target.prototype[key]
       if (path && method) {
@@ -24,7 +19,7 @@ export function controller(root: string) {
         } else {
           router[method](fullPath, handler)
         }
-
+        console.log(`router[${method}](${fullPath},`, handler);
       }
     }
   }

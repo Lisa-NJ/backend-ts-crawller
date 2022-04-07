@@ -3,6 +3,7 @@ import express from 'express'
 import bodyParser from 'body-parser' // ts 支持的 import
 import cookieSession from 'cookie-session'
 import { router } from './router'
+import './controller'
 
 const app = express()
 
