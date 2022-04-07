@@ -3,7 +3,7 @@ import path from 'path'
 import 'reflect-metadata'
 import { Request, Response, NextFunction } from 'express'
 import { get, use, controller } from '../decorator'
-import { getResponseData, Result } from '../Utils/util'
+import { getResponseData } from '../Utils/util'
 import Analyzer from '../Utils/analyzer'
 import Crawller from '../Utils/crawller'
 
@@ -11,23 +11,13 @@ interface BodyRequest extends Request {
   body: { [key: string]: string | undefined }
 }
 
-interface CourseItem {
-  title: string
-  count: number
-}
-
-interface Data {
-  [key: string]: CourseItem[]
-}
-
-
 const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void => {
   const isLogin = !!(req.session ? req.session.login : undefined)
   console.log('checkLogin middleware isLogin=', isLogin);
   if (isLogin) {
     next()
   } else {
-    res.json(getResponseData<boolean>(false, 'please login in first!'))
+    res.json(getResponseData(null, 'please login in first!'))
   }
 
 }
@@ -47,7 +37,7 @@ export class CrawllerController {
     const analyzer = Analyzer.getInstance()
     new Crawller(url, analyzer)
 
-    res.json(getResponseData<boolean>(true))
+    res.json(getResponseData<responseResult.getData>(true))
   }
 
   @get("/showData")
@@ -57,9 +47,9 @@ export class CrawllerController {
       const position = path.resolve(__dirname, '../../data/course.json')
       const result = fs.readFileSync(position, 'utf-8')
       //res.json(JSON.parse(result)) //\n shown on the page 
-      res.json(getResponseData<Data>(JSON.parse(result)))
+      res.json(getResponseData<responseResult.showData>(JSON.parse(result)))
     } catch (e) {
-      res.json(getResponseData<boolean>(false, 'content fail'))
+      res.json(getResponseData<responseResult.showData>(false, 'content fail'))
     }
 
   }

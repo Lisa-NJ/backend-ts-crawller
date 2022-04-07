@@ -17,7 +17,7 @@ export class LoginController {
     @get('/isLogin')
     isLogin(req: BodyRequest, res: Response): void {
         const isLogin = LoginController.isLogin(req)
-        const result: Result<boolean> = getResponseData(isLogin)
+        const result: Result<responseResult.isLogin> = getResponseData<responseResult.isLogin>(isLogin)
         res.json(result)
     }
 
@@ -28,15 +28,15 @@ export class LoginController {
         const { password } = req.body
         const isLogin = LoginController.isLogin(req)
         if (isLogin) {
-            const result: Result<boolean> = getResponseData(false, "already logged in")
+            const result = getResponseData<responseResult.login>(false, "already logged in")
             res.json(result)
         } else {
             if (password === '123' && req.session) {
                 req.session.login = true
-                const result: Result<boolean> = getResponseData(true)
+                const result = getResponseData<responseResult.isLogin>(true)
                 res.json(result)
             } else {
-                const result: Result<boolean> = getResponseData(false, "fail to login")
+                const result = getResponseData<responseResult.isLogin>(false, "fail to login")
                 res.json(result)
             }
         }
@@ -47,8 +47,7 @@ export class LoginController {
         if (req.session) {
             req.session.login = undefined
         }
-        const result: Result<boolean> = getResponseData(true)
-        res.json(result)
+        res.json(getResponseData<responseResult.logout>(true))
 
     }
 
